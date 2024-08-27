@@ -17,14 +17,14 @@ export const staticRouter: RouteRecordRaw[] = [
       title: '登录',
     },
   },
-  // {
-  //   path: "/layout",
-  //   name: "layout",
-  //   component: () => import("@/layouts/index.vue"),
-  //   // component: () => import("@/layouts/indexAsync.vue"),
-  //   redirect: HOME_URL,
-  //   children: []
-  // }
+  {
+    path: '/layout',
+    name: 'layout',
+    component: () => import('@/layouts/index.vue'),
+    // component: () => import("@/layouts/indexAsync.vue"),
+    redirect: HOME_URL,
+    children: [],
+  },
 ];
 
 /**

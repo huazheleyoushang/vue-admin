@@ -45,5 +45,16 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.formatOnSave": true,
-  "cSpell.words": ["pinia"]
+  "cSpell.words": [
+    "cascader",
+    "contentright",
+    "hexs",
+    "iconfont",
+    "pageable",
+    "persistedstate",
+    "pinia",
+    "screenfull",
+    "sortablejs",
+    "unplugin"
+  ]
 }
