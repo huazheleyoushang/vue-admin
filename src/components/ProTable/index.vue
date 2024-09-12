@@ -1,49 +1,6 @@
 <template>
-  <!-- 查询表单 -->
-  <SearchForm
-    v-show="isShowSearch"
-    :search="_search"
-    :reset="_reset"
-    :columns="searchColumns"
-    :search-param="searchParam"
-    :search-col="searchCol"
-  />
-
   <!-- 表格主体 -->
   <div class="card table-main">
-    <!-- 表格头部 操作按钮 -->
-    <div class="table-header">
-      <div class="header-button-lf">
-        <slot
-          name="tableHeader"
-          :selected-list="selectedList"
-          :selected-list-ids="selectedListIds"
-          :is-selected="isSelected"
-        />
-      </div>
-      <div v-if="toolButton" class="header-button-ri">
-        <slot name="toolButton">
-          <el-button
-            v-if="showToolButton('refresh')"
-            :icon="Refresh"
-            circle
-            @click="getTableList"
-          />
-          <el-button
-            v-if="showToolButton('setting') && columns.length"
-            :icon="Operation"
-            circle
-            @click="openColSetting"
-          />
-          <el-button
-            v-if="showToolButton('search') && searchColumns?.length"
-            :icon="Search"
-            circle
-            @click="isShowSearch = !isShowSearch"
-          />
-        </slot>
-      </div>
-    </div>
     <!-- 表格主体 -->
     <el-table
       ref="tableRef"
@@ -122,9 +79,7 @@ import { useTable } from '@/hooks/useTable';
 import { useSelection } from '@/hooks/useSelection';
 import { BreakPoint } from '@/components/Grid/interface';
 import { ColumnProps, TypeProps } from '@/components/ProTable/interface';
-import { Refresh, Operation, Search } from '@element-plus/icons-vue';
 import { generateUUID, handleProp } from '@/utils';
-import SearchForm from '@/components/SearchForm/index.vue';
 import Pagination from './components/Pagination.vue';
 import ColSetting from './components/ColSetting.vue';
 import TableColumn from './components/TableColumn.vue';
@@ -167,14 +122,6 @@ const uuid = ref('id-' + generateUUID());
 // column 列类型
 const columnTypes: TypeProps[] = ['selection', 'radio', 'index', 'expand', 'sort'];
 
-// 是否显示搜索模块
-const isShowSearch = ref(true);
-
-// 控制 ToolButton 显示
-const showToolButton = (key: 'refresh' | 'setting' | 'search') => {
-  return Array.isArray(props.toolButton) ? props.toolButton.includes(key) : props.toolButton;
-};
-
 // 单选值
 const radio = ref('');
 
@@ -187,18 +134,11 @@ const {
   pageable,
   searchParam,
   searchInitParam,
-  getTableList,
   search,
   reset,
   handleSizeChange,
   handleCurrentChange,
-} = useTable(
-  props.requestApi,
-  props.initParam,
-  props.pagination,
-  props.dataCallback,
-  props.requestError,
-);
+} = useTable(props.requestApi, props.initParam, props.pagination, props.requestError);
 
 // 清空选中数据列表
 const clearSelection = () => tableRef.value!.clearSelection();
@@ -206,7 +146,6 @@ const clearSelection = () => tableRef.value!.clearSelection();
 // 初始化表格数据 && 拖拽排序
 onMounted(() => {
   dragSort();
-  props.requestAuto && getTableList();
   props.data && (pageable.value.total = props.data.length);
 });
 
@@ -219,9 +158,6 @@ const processTableData = computed(() => {
     pageable.value.pageSize * pageable.value.pageNum,
   );
 });
-
-// 监听页面 initParam 改化，重新获取表格数据
-watch(() => props.initParam, getTableList, { deep: true });
 
 // 接收 columns 并设置为响应式
 const tableColumns = reactive<ColumnProps[]>(props.columns);
@@ -296,7 +232,6 @@ const colSetting = tableColumns!.filter((item) => {
   const { type, prop, isSetting } = item;
   return !columnTypes.includes(type!) && prop !== 'operation' && isSetting;
 });
-const openColSetting = () => colRef.value.openColSetting();
 
 // 定义 emit 事件
 const emit = defineEmits<{
@@ -304,16 +239,6 @@ const emit = defineEmits<{
   reset: [];
   dragSort: [{ newIndex?: number; oldIndex?: number }];
 }>();
-
-const _search = () => {
-  search();
-  emit('search');
-};
-
-const _reset = () => {
-  reset();
-  emit('reset');
-};
 
 // 表格拖拽排序
 const dragSort = () => {
@@ -342,9 +267,6 @@ defineExpose({
   selectedListIds,
 
   // 下面为 function
-  getTableList,
-  search,
-  reset,
   handleSizeChange,
   handleCurrentChange,
   clearSelection,

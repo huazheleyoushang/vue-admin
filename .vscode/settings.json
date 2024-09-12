@@ -48,6 +48,7 @@
   "cSpell.words": [
     "cascader",
     "contentright",
+    "datetimerange",
     "hexs",
     "iconfont",
     "pageable",
@@ -55,6 +56,7 @@
     "pinia",
     "screenfull",
     "sortablejs",
-    "unplugin"
+    "unplugin",
+    "unref"
   ]
 }
